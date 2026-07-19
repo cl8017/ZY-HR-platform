@@ -598,3 +598,78 @@ WantedBy=multi-user.target
 - 优先做 Phase 1（基础） + Phase 4 安全（密码移除 + SQL 审计）
 - 后端拆分可以边用边改
 - 前端统一可以放到最后
+
+---
+
+## 六、进展跟踪
+
+> 此章节记录各阶段实际完成情况。后续执行的 agent 请先阅读此处确认当前进度。
+
+### Phase 1 — 基础设施与清理 ✅ 已完成 (2026-07-19)
+
+**执行人**: Hermes Agent (default profile)
+**GitHub**: https://github.com/cl8017/ZY-HR-platform (master)
+
+#### 已完成清单
+
+| 交付物 | 状态 | 文件路径 |
+|--------|------|---------|
+| 标准化项目目录结构 | ✅ | `backend/`, `static/`, `pages/`, `docs/`, `scripts/` |
+| `.env` 配置管理 | ✅ | `.env.example` + `backend/config.py` |
+| `requirements.txt` | ✅ | Flask, PyMySQL, python-dotenv, gunicorn 等 |
+| `.gitignore` + `README.md` | ✅ | 已提交至 GitHub |
+| 后端骨架 (Flask app factory) | ✅ | `backend/app.py` |
+| 数据库连接管理 | ✅ | `backend/models/db.py` (上下文管理器) |
+| Blueprint 路由拆分 | ✅ | 5 个模块路由文件 |
+| 统一响应工具函数 | ✅ | `backend/utils/helpers.py` |
+| 统一 CSS 主题变量 | ✅ | `static/css/main.css` |
+| 公共 JS (api.js + utils.js) | ✅ | `static/js/api.js`, `static/js/utils.js` |
+| 统一风格首页 | ✅ | `pages/index.html` |
+| 项目 Wiki | ✅ | `docs/wiki/` (8 篇) |
+| 运维脚本 | ✅ | `scripts/dev.sh`, `scripts/start.sh`, `Procfile` |
+| GitHub 仓库 | ✅ | `cl8017/ZY-HR-platform` |
+| 语法 + 导入链路验证 | ✅ | 13 文件语法通过 + 27 路由全部注册成功 |
+
+#### 已迁移的 API 路由（与原系统兼容）
+
+> `routes/dashboard.py`：red_alert, retirement, compilation, red_alert_department, employee_roster_markdown, position_competency, employee_events, person_wordcloud
+>
+> `routes/project.py`：项目 CRUD 全套 11 路由
+>
+> `routes/talent.py`：人才库 3 路由
+>
+> `routes/teacher.py`：导师帮带
+>
+> `routes/studio.py`：大师工作室
+>
+> `ddc.html`（文档查重）为纯前端实现，无后端 API 依赖，Phase 3 前端重构时处理。
+
+---
+
+### Phase 2 — 后端重构
+
+> 🔲 待执行
+>
+> **接手说明**:
+> 1. 如需从原 `zjyc_api.py` 迁移更多路由，或完善现有模块的 business logic，请在 `backend/services/` 下添加对应的 service 层
+> 2. 原系统的旧 API 文件位于 `/mnt/c/code/ZY-HR/zjyc_api.py`（旧项目根目录）
+> 3. 数据库密码在 `.env` 中配置，请勿硬编码
+
+### Phase 3 — 前端重构
+
+> 🔲 待执行
+>
+> **接手说明**:
+> 1. 将 `/mnt/c/code/ZY-HR/` 下的页面复制到 `ZY-HR-platform/pages/` 对应子目录
+> 2. 改造 `static/css/main.css` 主题变量即可统一配色，无需改变页面布局
+> 3. `static/js/api.js` 已封装好统一 API 请求，新页面直接使用
+> 4. 原页面内硬编码的 IP 地址请替换为 `window.__API_BASE__`
+
+### Phase 4 — 安全加固与运维
+
+> 🔲 待执行
+>
+> **接手说明**:
+> 1. SQL 审计：检查 routes/ 下所有 LIKE 和 IN 子句，确保参数化
+> 2. Token 验证：参考 `backend/utils/helpers.py` 添加装饰器
+> 3. 部署：`scripts/start.sh` + Procfile 已就绪，systemd 单元参考 deployment.md
