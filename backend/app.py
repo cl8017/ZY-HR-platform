@@ -55,6 +55,9 @@ def create_app():
     from backend.routes.dashboard import dashboard_bp
     app.register_blueprint(dashboard_bp)
 
+    from backend.routes.report import report_bp
+    app.register_blueprint(report_bp)
+
     return app
 
 

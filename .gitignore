@@ -31,10 +31,8 @@ instance/
 *.log
 logs/
 
-# Project specific - backup/temp files (will be cleaned in Phase 1)
-# *.bak
-# *-副本*
-# *copy*
+# Legacy backup
+zjyc_api_legacy.py
 
 # Hermes
 .hermes/plans/

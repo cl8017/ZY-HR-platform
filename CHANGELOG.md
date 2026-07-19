@@ -1,5 +1,23 @@
 # ZY-HR 变更日志
 
+## [0.2.0] - 2026-07-19
+
+### 新增
+- backend/routes/report.py：编制/预警/花名册蓝图（/compilation, /red_alert_department, /employee_roster_markdown）
+- backend/utils/text_utils.py：文本工具函数（camel_case, preprocess_text, parse_event_field 抽取）
+- /position_competency_analysis 路由迁移到 dashboard.py（使用 db2）
+- 输入参数校验（int 转换异常返回 HTTP 400）
+- MockCursor 扩展支持 compilation, employee_roster, department 预警, position_competency 的 mock 数据
+
+### 修复
+- MockCursor 缺少 __enter__/__exit__ 导致路由报 500
+- position_competency_analysis 缺少 jsonify 导入
+- int() 参数转换无校验导致 abc 等非法输入 500 崩
+
+### 优化
+- db2 改为惰性导入（函数内部 import），避免模块加载时连接
+- 所有新增路由保留原始响应格式（json.dumps 或 jsonify 原始数组），前端兼容
+
 ## [0.1.0] - 2026-07-19
 
 ### 新增
@@ -15,4 +33,4 @@
 
 ### 变更
 - Flask 启动方式改为 config.py 集中管理配置
-- API 路径保持原始 `/red_alert`（无 `/api` 前缀），前端无需修改
+- API 路径保持原始，前端无需修改

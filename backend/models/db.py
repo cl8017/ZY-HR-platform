@@ -110,8 +110,29 @@ class MockCursor:
                 {'id': 1, 'name': '模拟退休预测-张三', 'retiring_count': 3, 'department': '营销中心', 'year': 2026},
                 {'id': 2, 'name': '模拟退休预测-李四', 'retiring_count': 1, 'department': '物流中心', 'year': 2027},
             ]
+        elif 'personnel_statistics' in query or 'compilation' in query:
+            self._data = [
+                {'主键ID': 1, '单位名称': '镇江市烟草公司', '部门名称': '营销中心', '人员编制数_总数': 25, '实有人数_总数': 22, '备注': '模拟数据'},
+                {'主键ID': 2, '单位名称': '镇江市烟草公司', '部门名称': '物流中心', '人员编制数_总数': 30, '实有人数_总数': 28, '备注': '模拟数据'},
+            ]
+        elif 'employee_roster' in query:
+            self._data = [
+                {'员工id': 1, '员工姓名': '模拟张三', '员工部门': '营销中心', '当前职位': '科长', '学历': '本科'},
+                {'员工id': 2, '员工姓名': '模拟李四', '员工部门': '物流中心', '当前职位': '副科长', '学历': '硕士'},
+            ]
+        elif 'department' in query and 'retiring' in query:
+            self._data = [
+                {'department': '营销中心', 'retiring_count': 3, 'total_count': 25, 'retirement_ratio': 12.0, 'is_red_alert': 0},
+                {'department': '物流中心', 'retiring_count': 6, 'total_count': 30, 'retirement_ratio': 20.0, 'is_red_alert': 0},
+                {'department': '机关科室', 'retiring_count': 12, 'total_count': 28, 'retirement_ratio': 42.86, 'is_red_alert': 1},
+            ]
+        elif 'position_competency' in query:
+            self._data = [{
+                'id': 1, 'name': '张三', 'company': '镇江烟草', 'department': '营销中心',
+                'score': 85.5, 'level': '优秀', 'analysis_date': '2026-01-01'
+            }]
         else:
-            self._data = [{'msg': f'mock data for: {query[:50]}'}]
+            self._data = [{'msg': ('mock data for: ' + str(query[:50]))}]
         return len(self._data)
 
     def fetchall(self):

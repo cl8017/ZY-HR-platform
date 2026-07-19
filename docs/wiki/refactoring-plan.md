@@ -176,7 +176,7 @@ ZY-HR/
 
 6. **清理废弃文件** — 删除所有 `*- 副本*`、`*.bak`、`*copy*`、旧版本文件
 
-7. **将当前 `zjyc_api.py` 复制为 `zjyc_api_legacy.py`** 备案，然后开始重构
+7. **将当前 `zjyc_api.py` 复制为 `zjyc_api_legacy.py`** 备案，然后开始重构 ✅
 
 #### 1.3 交付物
 
@@ -196,8 +196,8 @@ ZY-HR/
 
 | 当前路由 | 目标模块 | 优先级 |
 |---------|---------|--------|
-| `/red_alert`, `/retirement_personnel_prediction`, `/compilation`, `/red_alert_department`, `/employee_roster_markdown` | `routes/dashboard.py` | 🔶 高 |
-| `/position_competency_analysis`, `/api/zjyc/score`, `/api/zjyc/count_by_category`, `/api/board/talent/category` | `routes/dashboard.py` | 🔶 高 |
+| `/red_alert`, `/retirement_personnel_prediction`, `/compilation`, `/red_alert_department`, `/employee_roster_markdown` | `routes/dashboard.py` + `routes/report.py` | 🔶 ✅ 已迁移 |
+| `/position_competency_analysis`, `/api/zjyc/score`, `/api/zjyc/count_by_category`, `/api/board/talent/category` | `routes/dashboard.py` | 🔶 ✅ 已迁移(position_competency_analysis) |
 | `/employee/events`, `/person/wordcloud`, `/api/zjyc/teacher` | `routes/teacher.py` | 🔶 高 |
 | `/api/zjyc/create_master_studio` | `routes/studio.py` | 🔶 高 |
 | `/api/group/projects`, `/api/group/<id>`, `/api/group/<id>/members`, `/api/group/<id>/phases`, `/api/group/<id>/achievements`, `/api/group/<id>/dashboard`, `/api/group/create-project`, `/api/group/<id>/add-member`, `/api/group/<id>/add-achievement`, `/api/group/statistics`, `/api/group/<id>/toggle-visibility` | `routes/project.py` | 🔶 高 |
