@@ -1,5 +1,17 @@
 # ZY-HR 变更日志
 
+## [0.3.0] - 2026-07-19
+
+### 新增
+- backend/routes/teacher.py：导师帮带蓝图（/employee/events, /person/wordcloud, /api/zjyc/teacher）
+- backend/routes/talent.py：人才库+大师工作室蓝图（/api/zjyc/score, /api/zjyc/create_master_studio, /api/zjyc/count_by_category, /api/board/talent/category）
+- backend/routes/project.py：课题项目组蓝图（/api/group/projects, /api/group/<id>, /api/group/<id>/members, /api/group/<id>/phases, /api/group/<id>/achievements, /api/group/<id>/dashboard, /api/group/create-project, /api/group/<id>/add-member, /api/group/<id>/add-achievement, /api/group/statistics, /api/group/<id>/toggle-visibility）
+- MockCursor 扩展支持 teacher / talent / project 相关 mock 数据
+
+### 优化
+- backend/app.py 注册 teacher/talent/project 三个新蓝图
+- API 路径保持原始，前端无需修改
+
 ## [0.2.0] - 2026-07-19
 
 ### 新增

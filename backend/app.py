@@ -58,6 +58,15 @@ def create_app():
     from backend.routes.report import report_bp
     app.register_blueprint(report_bp)
 
+    from backend.routes.teacher import teacher_bp
+    app.register_blueprint(teacher_bp)
+
+    from backend.routes.talent import talent_bp
+    app.register_blueprint(talent_bp)
+
+    from backend.routes.project import project_bp
+    app.register_blueprint(project_bp)
+
     return app
 
 
