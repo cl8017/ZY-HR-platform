@@ -47,7 +47,7 @@ def get_project_detail(project_id):
 
                 # 阶段内容
                 cursor.execute(
-                    "SELECT * FROM zy_hr_group_phase_content WHERE project_id = %s ORDER BY phase_content_id ASC",
+                    "SELECT * FROM zy_hr_group_phase_content WHERE project_id = %s ORDER BY content_id ASC",
                     (project_id,)
                 )
                 phaseContents = cursor.fetchall()
@@ -123,7 +123,7 @@ def get_project_phases(project_id):
                 # 为每个阶段查询对应的阶段内容
                 for phase in phases:
                     cursor.execute(
-                        "SELECT * FROM zy_hr_group_phase_content WHERE phase_id = %s ORDER BY phase_content_id ASC",
+                        "SELECT * FROM zy_hr_group_phase_content WHERE phase_id = %s ORDER BY content_id ASC",
                         (phase['phase_id'],)
                     )
                     phase['contents'] = cursor.fetchall()
@@ -235,14 +235,25 @@ def create_project():
         with db1.get_conn() as conn:
             with conn.cursor() as cursor:
                 # 构建动态插入字段
+                # API字段名 → DB字段名映射
+                field_map = {
+                    'description': 'project_description',
+                    'project_name': 'project_name',
+                    'project_title': 'project_title',
+                    'leader': 'leader',
+                    'status': 'status',
+                    'sort_order': 'sort_order',
+                    'start_date': 'start_date',
+                    'end_date': 'end_date',
+                }
                 fields = ['project_name']
                 values = [project_name]
                 placeholders = ['%s']
 
-                for field in ['description', 'leader', 'status', 'sort_order', 'start_date', 'end_date']:
-                    if field in data:
-                        fields.append(field)
-                        values.append(data[field])
+                for api_field, db_field in field_map.items():
+                    if api_field != 'project_name' and api_field in data:
+                        fields.append(db_field)
+                        values.append(data[api_field])
                         placeholders.append('%s')
 
                 sql = f"INSERT INTO zy_hr_group_project ({', '.join(fields)}) VALUES ({', '.join(placeholders)})"
@@ -253,8 +264,8 @@ def create_project():
                 leader = data.get('leader')
                 if leader:
                     cursor.execute(
-                        "INSERT INTO zy_hr_group_members (project_id, user_name, member_type) VALUES (%s, %s, %s)",
-                        (project_id, leader, 'leader')
+                        "INSERT INTO zy_hr_group_members (project_id, member_name, member_type) VALUES (%s, %s, %s)",
+                        (project_id, leader, 0)
                     )
 
                 # 可选：添加成员列表
@@ -262,8 +273,8 @@ def create_project():
                 if isinstance(members, list):
                     for member in members:
                         cursor.execute(
-                            "INSERT INTO zy_hr_group_members (project_id, user_name, member_type) VALUES (%s, %s, %s)",
-                            (project_id, member.get('user_name', ''), member.get('member_type', 'member'))
+                            "INSERT INTO zy_hr_group_members (project_id, member_name, member_type) VALUES (%s, %s, %s)",
+                            (project_id, member.get('member_name', ''), member.get('member_type', 1))
                         )
 
         return success({'project_id': project_id, 'project_name': project_name}, '项目创建成功')
@@ -279,8 +290,8 @@ def add_project_member(project_id):
         if not data:
             return error('请求数据不能为空', 400)
 
-        user_name = data.get('user_name')
-        if not user_name:
+        member_name = data.get('member_name')
+        if not member_name:
             return error('用户名称不能为空', 400)
 
         with db1.get_conn() as conn:
@@ -290,8 +301,8 @@ def add_project_member(project_id):
                 if not cursor.fetchone():
                     return error('项目不存在', 404)
 
-                fields = ['project_id', 'user_name']
-                values = [project_id, user_name]
+                fields = ['project_id', 'member_name']
+                values = [project_id, member_name]
                 placeholders = ['%s', '%s']
 
                 for field in ['member_type', 'role', 'description']:
