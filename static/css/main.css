@@ -1,0 +1,264 @@
+/* =============================================
+   ZY-HR 统一设计体系 — 主题变量与全局样式
+   ============================================= */
+
+/* === 主题变量 === */
+:root {
+  /* 主色 — 烟草绿 */
+  --color-primary: #1E5A32;
+  --color-primary-light: #2D8A4E;
+  --color-primary-dark: #0F3A1E;
+  --color-primary-bg: rgba(30, 90, 50, 0.08);
+
+  /* 辅助色 */
+  --color-secondary: #0A84FF;
+  --color-accent: #D4AF37;
+
+  /* 中性色 */
+  --color-bg: #F5F7FA;
+  --color-surface: #FFFFFF;
+  --color-text: #1D2129;
+  --color-text-secondary: #667085;
+  --color-border: #E5E8EF;
+
+  /* 语义色 */
+  --color-success: #52C41A;
+  --color-warning: #FAAD14;
+  --color-danger: #FF4D4F;
+  --color-info: #165DFF;
+
+  /* 暗色模式变量（大屏看板用） */
+  --color-dark-bg: #0F172A;
+  --color-dark-card: #1E293B;
+  --color-dark-text: #F1F5F9;
+
+  /* 布局 */
+  --sidebar-width: 240px;
+  --header-height: 64px;
+  --border-radius: 8px;
+  --border-radius-sm: 4px;
+  --border-radius-lg: 12px;
+
+  /* 阴影 */
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.08);
+  --shadow-md: 0 4px 20px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 8px 30px rgba(0, 0, 0, 0.12);
+
+  /* 字体 */
+  --font-sans: 'Inter', 'Microsoft YaHei', 'PingFang SC', system-ui, sans-serif;
+}
+
+/* === 全局重置 === */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: var(--font-sans);
+  color: var(--color-text);
+  background-color: var(--color-bg);
+  margin: 0;
+  padding: 0;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* === 通用卡片 === */
+.card {
+  background: var(--color-surface);
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow-sm);
+  padding: 20px;
+  margin-bottom: 20px;
+  transition: box-shadow 0.3s ease, transform 0.3s ease;
+}
+
+.card:hover {
+  box-shadow: var(--shadow-md);
+}
+
+.card-hover:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lg);
+}
+
+/* === 按钮 === */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 8px 20px;
+  border-radius: var(--border-radius-sm);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: all 0.2s ease;
+  text-decoration: none;
+}
+
+.btn-primary {
+  background: var(--color-primary);
+  color: #fff;
+  border-color: var(--color-primary);
+}
+.btn-primary:hover {
+  background: var(--color-primary-light);
+}
+
+.btn-secondary {
+  background: var(--color-surface);
+  color: var(--color-text);
+  border-color: var(--color-border);
+}
+.btn-secondary:hover {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+}
+
+.btn-danger {
+  background: var(--color-danger);
+  color: #fff;
+}
+
+/* === 表单 === */
+.form-input {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius-sm);
+  font-size: 14px;
+  transition: border-color 0.2s;
+}
+.form-input:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px var(--color-primary-bg);
+}
+
+.form-label {
+  display: block;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--color-text);
+  margin-bottom: 6px;
+}
+
+/* === 表格 === */
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.table th {
+  background: var(--color-bg);
+  font-weight: 600;
+  font-size: 13px;
+  color: var(--color-text-secondary);
+  padding: 12px 16px;
+  text-align: left;
+  border-bottom: 2px solid var(--color-border);
+}
+.table td {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--color-border);
+  font-size: 14px;
+}
+.table tr:hover td {
+  background: var(--color-primary-bg);
+}
+
+/* === 标签 === */
+.tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 10px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 500;
+}
+.tag-success { background: #F6FFED; color: var(--color-success); }
+.tag-warning { background: #FFFBE6; color: #D48806; }
+.tag-danger  { background: #FFF1F0; color: var(--color-danger); }
+.tag-info    { background: #E6F7FF; color: var(--color-info); }
+
+/* === 布局 === */
+.app-layout {
+  display: flex;
+  min-height: 100vh;
+}
+
+.app-sidebar {
+  width: var(--sidebar-width);
+  background: var(--color-primary-dark);
+  color: #fff;
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  overflow-y: auto;
+  z-index: 100;
+}
+.app-sidebar .logo {
+  padding: 20px;
+  font-size: 18px;
+  font-weight: 700;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+.app-sidebar .nav-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 20px;
+  color: rgba(255,255,255,0.7);
+  text-decoration: none;
+  transition: all 0.2s;
+}
+.app-sidebar .nav-item:hover,
+.app-sidebar .nav-item.active {
+  color: #fff;
+  background: rgba(255,255,255,0.1);
+}
+
+.app-main {
+  margin-left: var(--sidebar-width);
+  flex: 1;
+  padding: 24px;
+}
+
+.app-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 24px;
+  height: var(--header-height);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-sm);
+  margin: -24px -24px 24px;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+
+/* === 加载动画 === */
+.loading-spinner {
+  display: inline-block;
+  width: 24px;
+  height: 24px;
+  border: 3px solid var(--color-border);
+  border-top-color: var(--color-primary);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* === 暗色看板（保留大屏风格） === */
+.dashboard-dark {
+  background: var(--color-dark-bg);
+  color: var(--color-dark-text);
+}
+.dashboard-dark .card {
+  background: var(--color-dark-card);
+  border: 1px solid rgba(255,255,255,0.05);
+}

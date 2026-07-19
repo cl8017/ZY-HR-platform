@@ -1,0 +1,89 @@
+/* 公共组件样式 — 供各页面引用 */
+@import url('./main.css');
+
+/* 统计数据卡片 */
+.stat-card {
+  text-align: center;
+  padding: 24px 16px;
+}
+.stat-card .stat-value {
+  font-size: 32px;
+  font-weight: 700;
+  color: var(--color-primary);
+}
+.stat-card .stat-label {
+  font-size: 14px;
+  color: var(--color-text-secondary);
+  margin-top: 4px;
+}
+.stat-card .stat-icon {
+  font-size: 28px;
+  margin-bottom: 8px;
+  color: var(--color-primary-light);
+}
+
+/* 搜索栏 */
+.search-bar {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.search-bar .search-input {
+  min-width: 240px;
+}
+
+/* 空状态 */
+.empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  color: var(--color-text-secondary);
+}
+.empty-state .empty-icon {
+  font-size: 48px;
+  margin-bottom: 16px;
+  color: var(--color-border);
+}
+
+/* 进度条 */
+.progress-bar {
+  height: 8px;
+  border-radius: 4px;
+  background: var(--color-bg);
+  overflow: hidden;
+}
+.progress-bar .progress-fill {
+  height: 100%;
+  border-radius: 4px;
+  transition: width 0.6s ease;
+  background: var(--color-primary);
+}
+.progress-bar .progress-fill.success { background: var(--color-success); }
+.progress-bar .progress-fill.warning { background: var(--color-warning); }
+.progress-bar .progress-fill.danger  { background: var(--color-danger); }
+
+/* 分页 */
+.pagination {
+  display: flex;
+  gap: 4px;
+  justify-content: center;
+  align-items: center;
+  margin-top: 20px;
+}
+.pagination .page-btn {
+  padding: 6px 12px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius-sm);
+  background: var(--color-surface);
+  cursor: pointer;
+  font-size: 14px;
+}
+.pagination .page-btn:hover {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+}
+.pagination .page-btn.active {
+  background: var(--color-primary);
+  color: #fff;
+  border-color: var(--color-primary);
+}

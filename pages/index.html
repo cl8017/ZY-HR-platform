@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>镇江烟草人才培养数智平台</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="/static/css/main.css">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#1E5A32',
+            'primary-light': '#2D8A4E',
+            'primary-dark': '#0F3A1E',
+            secondary: '#0A84FF',
+            accent: '#D4AF37',
+          },
+          fontFamily: {
+            sans: ['Inter', 'Microsoft YaHei', 'PingFang SC', 'system-ui', 'sans-serif'],
+          },
+        }
+      }
+    }
+  </script>
+  <style>
+    .bg-grid {
+      background-image:
+        linear-gradient(rgba(30, 90, 50, 0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(30, 90, 50, 0.05) 1px, transparent 1px);
+      background-size: 40px 40px;
+    }
+    .module-card {
+      transition: all 0.3s ease;
+    }
+    .module-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 20px 25px -5px rgba(30, 90, 50, 0.15), 0 10px 10px -5px rgba(30, 90, 50, 0.1);
+    }
+  </style>
+</head>
+<body class="bg-[#F5F7FA] text-[#1D2129] font-sans antialiased">
+
+  <!-- 导航栏 -->
+  <header class="bg-white shadow-sm sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-lg bg-primary flex items-center justify-center">
+          <i class="fa-solid fa-leaf text-white text-lg"></i>
+        </div>
+        <span class="text-lg font-bold text-primary">烟草人才培养数智平台</span>
+      </div>
+      <div class="flex items-center gap-4 text-sm text-gray-500">
+        <span><i class="fa-regular fa-user mr-1"></i>管理员</span>
+        <a href="/login.html" class="text-primary hover:underline">
+          <i class="fa-solid fa-right-from-bracket mr-1"></i>登录
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- 主内容 -->
+  <main class="max-w-7xl mx-auto px-6 py-8">
+
+    <!-- 欢迎区域 -->
+    <section class="mb-10">
+      <h1 class="text-3xl font-bold text-primary-dark mb-2">
+        欢迎使用人才培养数智平台 <span class="text-sm font-normal text-gray-400 ml-2">v2.0 重构版</span>
+      </h1>
+      <p class="text-gray-500">融合前沿科技与烟草行业特色，打造数字化、智能化的人才培养体系</p>
+    </section>
+
+    <!-- 功能模块网格 -->
+    <section>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+
+        <!-- 数据看板 -->
+        <a href="/dashboard/" class="module-card bg-white rounded-xl p-6 shadow-sm border border-gray-100 block">
+          <div class="w-12 h-12 rounded-lg bg-blue-50 flex items-center justify-center mb-4">
+            <i class="fa-solid fa-chart-pie text-xl text-[#0A84FF]"></i>
+          </div>
+          <h3 class="font-semibold text-lg mb-2">数据看板</h3>
+          <p class="text-sm text-gray-400">红色预警、退休预测、编制分析、人员统计驾驶舱</p>
+          <div class="mt-4 flex gap-2">
+            <span class="text-xs px-2 py-1 rounded-full bg-blue-50 text-[#0A84FF]">ECharts</span>
+            <span class="text-xs px-2 py-1 rounded-full bg-gray-50 text-gray-400">实时数据</span>
+          </div>
+        </a>
+
+        <!-- 人才库 -->
+        <a href="/talent/talent_bank.html" class="module-card bg-white rounded-xl p-6 shadow-sm border border-gray-100 block">
+          <div class="w-12 h-12 rounded-lg bg-emerald-50 flex items-center justify-center mb-4">
+            <i class="fa-solid fa-users text-xl text-[#10B981]"></i>
+          </div>
+          <h3 class="font-semibold text-lg mb-2">人才库</h3>
+          <p class="text-sm text-gray-400">人才信息管理、品牌人才、多维数据分析与筛选</p>
+          <div class="mt-4 flex gap-2">
+            <span class="text-xs px-2 py-1 rounded-full bg-emerald-50 text-[#10B981]">人才管理</span>
+          </div>
+        </a>
+
+        <!-- 导师帮带 -->
+        <a href="/teacher/teacher.html" class="module-card bg-white rounded-xl p-6 shadow-sm border border-gray-100 block">
+          <div class="w-12 h-12 rounded-lg bg-purple-50 flex items-center justify-center mb-4">
+            <i class="fa-solid fa-handshake text-xl text-[#8B5CF6]"></i>
+          </div>
+          <h3 class="font-semibold text-lg mb-2">导师帮带</h3>
+          <p class="text-sm text-gray-400">导师关系管理、帮带看板、员工事件追踪、词云分析</p>
+          <div class="mt-4 flex gap-2">
+            <span class="text-xs px-2 py-1 rounded-full bg-purple-50 text-[#8B5CF6]">人才发展</span>
+          </div>
+        </a>
+
+        <!-- 大师工作室 -->
+        <a href="/studio/master_class.html" class="module-card bg-white rounded-xl p-6 shadow-sm border border-gray-100 block">
+          <div class="w-12 h-12 rounded-lg bg-amber-50 flex items-center justify-center mb-4">
+            <i class="fa-solid fa-gem text-xl text-[#D4AF37]"></i>
+          </div>
+          <h3 class="font-semibold text-lg mb-2">大师工作室</h3>
+          <p class="text-sm text-gray-400">工作室创建与管理、成果展示</p>
+          <div class="mt-4 flex gap-2">
+            <span class="text-xs px-2 py-1 rounded-full bg-amber-50 text-[#D4AF37]">技能传承</span>
+          </div>
+        </a>
+
+        <!-- 课题项目组 -->
+        <a href="/project/admin-projects.html" class="module-card bg-white rounded-xl p-6 shadow-sm border border-gray-100 block">
+          <div class="w-12 h-12 rounded-lg bg-rose-50 flex items-center justify-center mb-4">
+            <i class="fa-solid fa-diagram-project text-xl text-[#F43F5E]"></i>
+          </div>
+          <h3 class="font-semibold text-lg mb-2">课题项目组</h3>
+          <p class="text-sm text-gray-400">项目全生命周期管理、成员/阶段/成果管理</p>
+          <div class="mt-4 flex gap-2">
+            <span class="text-xs px-2 py-1 rounded-full bg-rose-50 text-[#F43F5E]">项目管理</span>
+          </div>
+        </a>
+
+        <!-- 文档查重 -->
+        <a href="/ddc/ddc.html" class="module-card bg-white rounded-xl p-6 shadow-sm border border-gray-100 block">
+          <div class="w-12 h-12 rounded-lg bg-cyan-50 flex items-center justify-center mb-4">
+            <i class="fa-solid fa-file-lines text-xl text-[#06B6D4]"></i>
+          </div>
+          <h3 class="font-semibold text-lg mb-2">文档查重分析</h3>
+          <p class="text-sm text-gray-400">Docx/PDF 智能查重、相似度分析</p>
+          <div class="mt-4 flex gap-2">
+            <span class="text-xs px-2 py-1 rounded-full bg-cyan-50 text-[#06B6D4]">智能分析</span>
+          </div>
+        </a>
+
+      </div>
+    </section>
+
+    <!-- 底部 -->
+    <footer class="mt-16 pt-6 border-t border-gray-200 text-center text-sm text-gray-400">
+      <p>© 2026 镇江烟草局 &amp; 华世智能科技 | 人才培养数智平台 v2.0</p>
+    </footer>
+  </main>
+
+  <script src="/static/js/utils.js"></script>
+</body>
+</html>
