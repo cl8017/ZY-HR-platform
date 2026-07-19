@@ -214,6 +214,6 @@ class MockCursor:
         pass
 
 
-# 全局实例
-db1 = DatabaseManager(config.db1, mock_data={'db_name': 'zj-yancao'})
+# 全局实例 - db1 已废弃(原210服务器)，全部指向 db2(36.149.161.6)
+db1 = DatabaseManager(config.db2, mock_data={'db_name': 'yancao'})
 db2 = DatabaseManager(config.db2, mock_data={'db_name': 'yancao'})

@@ -10,24 +10,23 @@ load_dotenv(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file_
 
 @dataclass
 class DBConfig:
-    host: str = field(default_factory=lambda: os.getenv('DB1_HOST', 'localhost'))
-    port: int = field(default_factory=lambda: int(os.getenv('DB1_PORT', '3306')))
-    user: str = field(default_factory=lambda: os.getenv('DB1_USER', 'root'))
-    password: str = field(default_factory=lambda: os.getenv('DB1_PASSWORD', ''))
-    database: str = field(default_factory=lambda: os.getenv('DB1_DATABASE', 'test'))
+    host: str = field(default_factory=lambda: os.getenv('DB2_HOST', 'localhost'))
+    port: int = field(default_factory=lambda: int(os.getenv('DB2_PORT', '33973')))
+    user: str = field(default_factory=lambda: os.getenv('DB2_USER', 'root'))
+    password: str = field(default_factory=lambda: os.getenv('DB2_PASSWORD', ''))
+    database: str = field(default_factory=lambda: os.getenv('DB2_DATABASE', 'yancao'))
     charset: str = 'utf8mb4'
     connect_timeout: int = 10
 
 
 @dataclass
 class AppConfig:
-    db1: DBConfig = field(default_factory=DBConfig)
     db2: DBConfig = field(default_factory=lambda: DBConfig(
-        host=os.getenv('DB2_HOST', 'localhost'),
-        port=int(os.getenv('DB2_PORT', '33973')),
-        user=os.getenv('DB2_USER', 'root'),
-        password=os.getenv('DB2_PASSWORD', ''),
-        database=os.getenv('DB2_DATABASE', 'yancao'),
+        host=os.getenv('DB2_HOST', os.getenv('DB_HOST', 'localhost')),
+        port=int(os.getenv('DB2_PORT', os.getenv('DB_PORT', '33973'))),
+        user=os.getenv('DB2_USER', os.getenv('DB_USER', 'root')),
+        password=os.getenv('DB2_PASSWORD', os.getenv('DB_PASSWORD', '')),
+        database=os.getenv('DB2_DATABASE', os.getenv('DB_DATABASE', 'yancao')),
     ))
     secret_key: str = field(default_factory=lambda: os.getenv('SECRET_KEY', 'dev-key'))
     debug: bool = field(default_factory=lambda: os.getenv('FLASK_DEBUG', '1') == '1')
