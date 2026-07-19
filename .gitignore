@@ -1,0 +1,44 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+build/
+
+# Virtual environment
+venv/
+.venv/
+env/
+
+# Environment variables
+.env
+.env.local
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Flask
+instance/
+
+# Logs
+*.log
+logs/
+
+# Project specific - backup/temp files (will be cleaned in Phase 1)
+# *.bak
+# *-副本*
+# *copy*
+
+# Hermes
+.hermes/plans/
+.hermes/issues/
+
+# Node
+node_modules/
