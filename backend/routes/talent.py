@@ -201,28 +201,8 @@ def board_talent_category():
                     cnt = row.get('cnt', 0)
                     education_distribution[edu] = cnt
 
-                # --- 3) 年龄分布 ---
-                age_sql = f"""
-                    SELECT
-                        CASE
-                            WHEN age < 30 THEN '30岁以下'
-                            WHEN age >= 30 AND age < 40 THEN '30-39岁'
-                            WHEN age >= 40 AND age < 50 THEN '40-49岁'
-                            WHEN age >= 50 AND age < 60 THEN '50-59岁'
-                            ELSE '60岁及以上'
-                        END AS age_group,
-                        COUNT(DISTINCT name) AS cnt
-                    FROM zy_hr_talent_pool
-                    WHERE del_flag = '0' {category_filter}
-                    GROUP BY age_group
-                """
-                cursor.execute(age_sql, cat_params)
-                age_rows = cursor.fetchall()
+                # --- 3) 年龄分布 (暂跳过，talent_pool 无 birth_date 字段) ---
                 age_distribution = {}
-                for row in age_rows:
-                    group = row.get('age_group', '未知')
-                    cnt = row.get('cnt', 0)
-                    age_distribution[group] = cnt
 
         # 不需要 age 字段时只返回前端的格式
         result = {

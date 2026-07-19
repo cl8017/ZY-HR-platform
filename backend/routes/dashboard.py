@@ -69,7 +69,9 @@ def get_position_competency_analysis():
             'total': len(formatted_rows),
             'rows': formatted_rows
         }
-        return json.dumps(result, ensure_ascii=False, indent=2), 200, {'Content-Type': 'application/json; charset=utf-8'}
+        import decimal
+        return json.dumps(result, ensure_ascii=False, indent=2,
+                          default=lambda o: float(o) if isinstance(o, decimal.Decimal) else str(o)), 200, {'Content-Type': 'application/json; charset=utf-8'}
     except Exception as e:
         return jsonify({
             'code': 500,
