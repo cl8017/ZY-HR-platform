@@ -12,7 +12,7 @@ def get_projects():
     try:
         with db1.get_conn() as conn:
             with conn.cursor() as cursor:
-                cursor.execute("SELECT * FROM tb_zjyc_group_project ORDER BY sort_order ASC")
+                cursor.execute("SELECT * FROM zy_hr_group_project ORDER BY sort_order ASC")
                 projects = cursor.fetchall()
         return success(projects, '查询成功')
     except Exception as e:
@@ -26,42 +26,42 @@ def get_project_detail(project_id):
         with db1.get_conn() as conn:
             with conn.cursor() as cursor:
                 # 项目基本信息
-                cursor.execute("SELECT * FROM tb_zjyc_group_project WHERE project_id = %s", (project_id,))
+                cursor.execute("SELECT * FROM zy_hr_group_project WHERE project_id = %s", (project_id,))
                 project = cursor.fetchone()
                 if not project:
                     return error('项目不存在', 404)
 
                 # 成员列表
                 cursor.execute(
-                    "SELECT * FROM tb_zjyc_group_members WHERE project_id = %s ORDER BY member_id ASC",
+                    "SELECT * FROM zy_hr_group_members WHERE project_id = %s ORDER BY member_id ASC",
                     (project_id,)
                 )
                 members = cursor.fetchall()
 
                 # 阶段列表
                 cursor.execute(
-                    "SELECT * FROM tb_zjyc_group_phases WHERE project_id = %s ORDER BY phase_order ASC",
+                    "SELECT * FROM zy_hr_group_phases WHERE project_id = %s ORDER BY phase_order ASC",
                     (project_id,)
                 )
                 phases = cursor.fetchall()
 
                 # 阶段内容
                 cursor.execute(
-                    "SELECT * FROM tb_zjyc_group_phase_content WHERE project_id = %s ORDER BY phase_content_id ASC",
+                    "SELECT * FROM zy_hr_group_phase_content WHERE project_id = %s ORDER BY phase_content_id ASC",
                     (project_id,)
                 )
                 phaseContents = cursor.fetchall()
 
                 # 成就列表
                 cursor.execute(
-                    "SELECT * FROM tb_zjyc_group_achievements WHERE project_id = %s ORDER BY achievement_id ASC",
+                    "SELECT * FROM zy_hr_group_achievements WHERE project_id = %s ORDER BY achievement_id ASC",
                     (project_id,)
                 )
                 achievements = cursor.fetchall()
 
                 # 仪表盘
                 cursor.execute(
-                    "SELECT * FROM tb_zjyc_group_dashboards WHERE project_id = %s",
+                    "SELECT * FROM zy_hr_group_dashboards WHERE project_id = %s",
                     (project_id,)
                 )
                 dashboard = cursor.fetchone()
@@ -94,12 +94,12 @@ def get_project_members(project_id):
             with conn.cursor() as cursor:
                 if member_type:
                     cursor.execute(
-                        "SELECT * FROM tb_zjyc_group_members WHERE project_id = %s AND member_type = %s ORDER BY member_id ASC",
+                        "SELECT * FROM zy_hr_group_members WHERE project_id = %s AND member_type = %s ORDER BY member_id ASC",
                         (project_id, member_type)
                     )
                 else:
                     cursor.execute(
-                        "SELECT * FROM tb_zjyc_group_members WHERE project_id = %s ORDER BY member_id ASC",
+                        "SELECT * FROM zy_hr_group_members WHERE project_id = %s ORDER BY member_id ASC",
                         (project_id,)
                     )
                 members = cursor.fetchall()
@@ -115,7 +115,7 @@ def get_project_phases(project_id):
         with db1.get_conn() as conn:
             with conn.cursor() as cursor:
                 cursor.execute(
-                    "SELECT * FROM tb_zjyc_group_phases WHERE project_id = %s ORDER BY phase_order ASC",
+                    "SELECT * FROM zy_hr_group_phases WHERE project_id = %s ORDER BY phase_order ASC",
                     (project_id,)
                 )
                 phases = cursor.fetchall()
@@ -123,7 +123,7 @@ def get_project_phases(project_id):
                 # 为每个阶段查询对应的阶段内容
                 for phase in phases:
                     cursor.execute(
-                        "SELECT * FROM tb_zjyc_group_phase_content WHERE phase_id = %s ORDER BY phase_content_id ASC",
+                        "SELECT * FROM zy_hr_group_phase_content WHERE phase_id = %s ORDER BY phase_content_id ASC",
                         (phase['phase_id'],)
                     )
                     phase['contents'] = cursor.fetchall()
@@ -142,25 +142,25 @@ def get_project_achievements(project_id):
             with conn.cursor() as cursor:
                 if achievement_type:
                     cursor.execute(
-                        "SELECT * FROM tb_zjyc_group_achievements WHERE project_id = %s AND type = %s ORDER BY achievement_id ASC",
+                        "SELECT * FROM zy_hr_group_achievements WHERE project_id = %s AND type = %s ORDER BY achievement_id ASC",
                         (project_id, achievement_type)
                     )
                 else:
                     cursor.execute(
-                        "SELECT * FROM tb_zjyc_group_achievements WHERE project_id = %s ORDER BY achievement_id ASC",
+                        "SELECT * FROM zy_hr_group_achievements WHERE project_id = %s ORDER BY achievement_id ASC",
                         (project_id,)
                     )
                 achievements = cursor.fetchall()
 
                 # 统计
                 cursor.execute(
-                    "SELECT COUNT(*) AS total FROM tb_zjyc_group_achievements WHERE project_id = %s",
+                    "SELECT COUNT(*) AS total FROM zy_hr_group_achievements WHERE project_id = %s",
                     (project_id,)
                 )
                 total = cursor.fetchone()['total']
 
                 cursor.execute(
-                    "SELECT type, COUNT(*) AS count FROM tb_zjyc_group_achievements WHERE project_id = %s GROUP BY type",
+                    "SELECT type, COUNT(*) AS count FROM zy_hr_group_achievements WHERE project_id = %s GROUP BY type",
                     (project_id,)
                 )
                 by_type = cursor.fetchall()
@@ -184,26 +184,26 @@ def get_project_dashboard(project_id):
         with db1.get_conn() as conn:
             with conn.cursor() as cursor:
                 cursor.execute(
-                    "SELECT * FROM tb_zjyc_group_dashboards WHERE project_id = %s",
+                    "SELECT * FROM zy_hr_group_dashboards WHERE project_id = %s",
                     (project_id,)
                 )
                 dashboard = cursor.fetchone()
 
                 if not dashboard:
                     cursor.execute(
-                        "SELECT COUNT(*) AS cnt FROM tb_zjyc_group_members WHERE project_id = %s",
+                        "SELECT COUNT(*) AS cnt FROM zy_hr_group_members WHERE project_id = %s",
                         (project_id,)
                     )
                     member_cnt = cursor.fetchone()['cnt']
 
                     cursor.execute(
-                        "SELECT COUNT(*) AS cnt FROM tb_zjyc_group_phases WHERE project_id = %s",
+                        "SELECT COUNT(*) AS cnt FROM zy_hr_group_phases WHERE project_id = %s",
                         (project_id,)
                     )
                     phase_cnt = cursor.fetchone()['cnt']
 
                     cursor.execute(
-                        "SELECT COUNT(*) AS cnt FROM tb_zjyc_group_achievements WHERE project_id = %s",
+                        "SELECT COUNT(*) AS cnt FROM zy_hr_group_achievements WHERE project_id = %s",
                         (project_id,)
                     )
                     achievement_cnt = cursor.fetchone()['cnt']
@@ -245,7 +245,7 @@ def create_project():
                         values.append(data[field])
                         placeholders.append('%s')
 
-                sql = f"INSERT INTO tb_zjyc_group_project ({', '.join(fields)}) VALUES ({', '.join(placeholders)})"
+                sql = f"INSERT INTO zy_hr_group_project ({', '.join(fields)}) VALUES ({', '.join(placeholders)})"
                 cursor.execute(sql, tuple(values))
                 project_id = cursor.lastrowid
 
@@ -253,7 +253,7 @@ def create_project():
                 leader = data.get('leader')
                 if leader:
                     cursor.execute(
-                        "INSERT INTO tb_zjyc_group_members (project_id, user_name, member_type) VALUES (%s, %s, %s)",
+                        "INSERT INTO zy_hr_group_members (project_id, user_name, member_type) VALUES (%s, %s, %s)",
                         (project_id, leader, 'leader')
                     )
 
@@ -262,7 +262,7 @@ def create_project():
                 if isinstance(members, list):
                     for member in members:
                         cursor.execute(
-                            "INSERT INTO tb_zjyc_group_members (project_id, user_name, member_type) VALUES (%s, %s, %s)",
+                            "INSERT INTO zy_hr_group_members (project_id, user_name, member_type) VALUES (%s, %s, %s)",
                             (project_id, member.get('user_name', ''), member.get('member_type', 'member'))
                         )
 
@@ -286,7 +286,7 @@ def add_project_member(project_id):
         with db1.get_conn() as conn:
             with conn.cursor() as cursor:
                 # 检查项目是否存在
-                cursor.execute("SELECT project_id FROM tb_zjyc_group_project WHERE project_id = %s", (project_id,))
+                cursor.execute("SELECT project_id FROM zy_hr_group_project WHERE project_id = %s", (project_id,))
                 if not cursor.fetchone():
                     return error('项目不存在', 404)
 
@@ -300,7 +300,7 @@ def add_project_member(project_id):
                         values.append(data[field])
                         placeholders.append('%s')
 
-                sql = f"INSERT INTO tb_zjyc_group_members ({', '.join(fields)}) VALUES ({', '.join(placeholders)})"
+                sql = f"INSERT INTO zy_hr_group_members ({', '.join(fields)}) VALUES ({', '.join(placeholders)})"
                 cursor.execute(sql, tuple(values))
                 member_id = cursor.lastrowid
 
@@ -333,7 +333,7 @@ def add_project_achievement(project_id):
                         values.append(data[field])
                         placeholders.append('%s')
 
-                sql = f"INSERT INTO tb_zjyc_group_achievements ({', '.join(fields)}) VALUES ({', '.join(placeholders)})"
+                sql = f"INSERT INTO zy_hr_group_achievements ({', '.join(fields)}) VALUES ({', '.join(placeholders)})"
                 cursor.execute(sql, tuple(values))
                 achievement_id = cursor.lastrowid
 
@@ -348,19 +348,19 @@ def get_group_statistics():
     try:
         with db1.get_conn() as conn:
             with conn.cursor() as cursor:
-                cursor.execute("SELECT COUNT(*) AS cnt FROM tb_zjyc_group_project")
+                cursor.execute("SELECT COUNT(*) AS cnt FROM zy_hr_group_project")
                 project_cnt = cursor.fetchone()['cnt']
 
-                cursor.execute("SELECT COUNT(*) AS cnt FROM tb_zjyc_group_members")
+                cursor.execute("SELECT COUNT(*) AS cnt FROM zy_hr_group_members")
                 member_cnt = cursor.fetchone()['cnt']
 
-                cursor.execute("SELECT COUNT(*) AS cnt FROM tb_zjyc_group_achievements")
+                cursor.execute("SELECT COUNT(*) AS cnt FROM zy_hr_group_achievements")
                 achievement_cnt = cursor.fetchone()['cnt']
 
-                cursor.execute("SELECT type, COUNT(*) AS count FROM tb_zjyc_group_achievements GROUP BY type")
+                cursor.execute("SELECT type, COUNT(*) AS count FROM zy_hr_group_achievements GROUP BY type")
                 achievement_by_type = cursor.fetchall()
 
-                cursor.execute("SELECT member_type, COUNT(*) AS count FROM tb_zjyc_group_members GROUP BY member_type")
+                cursor.execute("SELECT member_type, COUNT(*) AS count FROM zy_hr_group_members GROUP BY member_type")
                 member_by_type = cursor.fetchall()
 
         data = {
@@ -389,13 +389,13 @@ def toggle_project_visibility(project_id):
 
         with db1.get_conn() as conn:
             with conn.cursor() as cursor:
-                cursor.execute("SELECT project_id FROM tb_zjyc_group_project WHERE project_id = %s", (project_id,))
+                cursor.execute("SELECT project_id FROM zy_hr_group_project WHERE project_id = %s", (project_id,))
                 if not cursor.fetchone():
                     return error('项目不存在', 404)
 
                 status = 'visible' if is_visible else 'hidden'
                 cursor.execute(
-                    "UPDATE tb_zjyc_group_project SET status = %s WHERE project_id = %s",
+                    "UPDATE zy_hr_group_project SET status = %s WHERE project_id = %s",
                     (status, project_id)
                 )
 

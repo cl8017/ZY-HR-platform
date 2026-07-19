@@ -16,7 +16,7 @@ def get_red_alert():
     try:
         with db1.get_conn() as conn:
             with conn.cursor() as cursor:
-                cursor.execute("SELECT * FROM red_alert")
+                cursor.execute("SELECT * FROM zy_hr_red_alert")
                 data = cursor.fetchall()
         return success(data)
     except Exception as e:
@@ -30,7 +30,7 @@ def get_retirement_personnel():
         with db1.get_conn() as conn:
             with conn.cursor() as cursor:
                 cursor.execute(
-                    "SELECT * FROM Retirement_personnel_prediction where retiring_count > 0"
+                    "SELECT * FROM zy_hr_retirement_prediction where retiring_count > 0"
                 )
                 data = cursor.fetchall()
         return success(data)
@@ -50,8 +50,8 @@ def get_position_competency_analysis():
             with conn.cursor() as cursor:
                 sql = """
                     SELECT a.*, b.company, b.department 
-                    FROM position_competency_analysis a
-                    LEFT JOIN employee_roster b ON a.name = b.name
+                    FROM zy_hr_competency_analysis a
+                    LEFT JOIN zy_hr_employee_roster b ON a.name = b.name
                     WHERE a.id = %s 
                 """
                 cursor.execute(sql, (id_val,))

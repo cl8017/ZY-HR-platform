@@ -24,7 +24,7 @@ def _format_time(dt):
 
 @talent_bp.route('/api/zjyc/score', methods=['GET'])
 def get_zjyc_score():
-    """查 tb_zjyc_score_record LEFT JOIN tb_zjyc_member 获取积分变更记录"""
+    """查 zy_hr_score_record LEFT JOIN zy_hr_member 获取积分变更记录"""
     name = request.args.get('name')
     if not name:
         return error('缺少必填参数 name', 400)
@@ -43,8 +43,8 @@ def get_zjyc_score():
                         s.change_reason             AS '积分变更原因',
                         s.operation_time            AS '积分操作时间',
                         s.create_time               AS '记录创建时间'
-                    FROM tb_zjyc_score_record s
-                    LEFT JOIN tb_zjyc_member m ON s.member_id = m.id
+                    FROM zy_hr_score_record s
+                    LEFT JOIN zy_hr_member m ON s.member_id = m.id
                     WHERE m.member_name = %s
                     ORDER BY s.create_time DESC
                 """
@@ -83,7 +83,7 @@ def create_master_studio():
         with db1.get_conn() as conn:
             with conn.cursor() as cursor:
                 insert_sql = """
-                    INSERT INTO tb_zjyc_masterstudio_info (name, description, status, create_time)
+                    INSERT INTO zy_hr_master_studio (name, description, status, create_time)
                     VALUES (%s, %s, %s, %s)
                 """
                 cursor.execute(insert_sql, (name, description, status, create_time))
@@ -92,7 +92,7 @@ def create_master_studio():
                 # 如果有成员，插入关联表
                 if members and isinstance(members, list):
                     member_sql = """
-                        INSERT INTO tb_zjyc_masterstudio_member (studio_id, member_id)
+                        INSERT INTO zy_hr_master_studio_member (studio_id, member_id)
                         VALUES (%s, %s)
                     """
                     for member_id in members:
@@ -120,7 +120,7 @@ def count_by_category():
             with conn.cursor() as cursor:
                 sql = """
                     SELECT category, COUNT(DISTINCT name) AS cnt
-                    FROM hs_rencai
+                    FROM zy_hr_talent_pool
                     WHERE del_flag = '0'
                     GROUP BY category
                 """
@@ -170,7 +170,7 @@ def board_talent_category():
 
                 count_sql = f"""
                     SELECT category, COUNT(DISTINCT name) AS cnt
-                    FROM hs_rencai
+                    FROM zy_hr_talent_pool
                     WHERE del_flag = '0' {category_filter}
                     GROUP BY category
                 """
@@ -189,7 +189,7 @@ def board_talent_category():
                 # --- 2) 学历分布 ---
                 edu_sql = f"""
                     SELECT education, COUNT(DISTINCT name) AS cnt
-                    FROM hs_rencai
+                    FROM zy_hr_talent_pool
                     WHERE del_flag = '0' {category_filter}
                     GROUP BY education
                 """
@@ -212,7 +212,7 @@ def board_talent_category():
                             ELSE '60岁及以上'
                         END AS age_group,
                         COUNT(DISTINCT name) AS cnt
-                    FROM hs_rencai
+                    FROM zy_hr_talent_pool
                     WHERE del_flag = '0' {category_filter}
                     GROUP BY age_group
                 """

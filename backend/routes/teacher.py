@@ -18,7 +18,7 @@ def _get_employee_events(name):
             with conn.cursor() as cursor:
                 processed_name = preprocess_chinese_text(name)
                 cursor.execute(
-                    "SELECT * FROM employee_profile WHERE name LIKE %s",
+                    "SELECT * FROM zy_hr_employee_profile WHERE name LIKE %s",
                     (f'%{processed_name}%',)
                 )
                 employee = cursor.fetchone()
@@ -93,7 +93,7 @@ def _get_person_wordcloud(name):
             with conn.cursor() as cursor:
                 processed_name = preprocess_chinese_text(name)
                 cursor.execute(
-                    "SELECT wordcloud_tags FROM hs_rencai WHERE name = %s",
+                    "SELECT wordcloud_tags FROM zy_hr_talent_pool WHERE name = %s",
                     (processed_name,)
                 )
                 result = cursor.fetchone()
@@ -180,8 +180,8 @@ def get_related_people():
                 select a.name, a.role, b.department, b.current_position from
                 (select %s as name, '员工' as role from DUAL
                 union all
-                select teacher, type from tb_zjyc_teacher where name = %s) a
-                left join employee_roster b on a.name = b.name
+                select teacher, type from zy_hr_teacher where name = %s) a
+                left join zy_hr_employee_roster b on a.name = b.name
                 """
                 cursor.execute(sql, (processed_name, processed_name))
                 results = cursor.fetchall()

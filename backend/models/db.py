@@ -101,7 +101,7 @@ class MockCursor:
 
     def execute(self, query, params=None):
         # 根据查询返回不同的假数据
-        if 'red_alert' in query:
+        if 'zy_hr_red_alert' in query:
             self._data = [
                 {'id': 1, 'name': '模拟红色预警-张三', 'age': 62, 'department': '营销中心', 'warning_type': 'retirement', 'created_at': datetime.now().isoformat()},
                 {'id': 2, 'name': '模拟红色预警-李四', 'age': 57, 'department': '物流中心', 'warning_type': 'retirement', 'created_at': datetime.now().isoformat()},
@@ -117,17 +117,17 @@ class MockCursor:
                 {'id': 1, 'name': '模拟退休预测-张三', 'retiring_count': 3, 'department': '营销中心', 'year': 2026},
                 {'id': 2, 'name': '模拟退休预测-李四', 'retiring_count': 1, 'department': '物流中心', 'year': 2027},
             ]
-        elif 'personnel_statistics' in query or 'compilation' in query:
+        elif 'zy_hr_personnel_statistics' in query or 'compilation' in query:
             self._data = [
                 {'主键ID': 1, '单位名称': '镇江市烟草公司', '部门名称': '营销中心', '人员编制数_总数': 25, '实有人数_总数': 22, '备注': '模拟数据'},
                 {'主键ID': 2, '单位名称': '镇江市烟草公司', '部门名称': '物流中心', '人员编制数_总数': 30, '实有人数_总数': 28, '备注': '模拟数据'},
             ]
-        elif 'employee_roster' in query:
+        elif 'zy_hr_employee_roster' in query:
             self._data = [
                 {'员工id': 1, '员工姓名': '模拟张三', 'name': '张三', '员工部门': '营销中心', '当前职位': '科长', '学历': '本科', 'department': '营销中心', 'current_position': '科长'},
                 {'员工id': 2, '员工姓名': '模拟李四', 'name': '李四', '员工部门': '物流中心', '当前职位': '副科长', '学历': '硕士', 'department': '物流中心', 'current_position': '副科长'},
             ]
-        elif 'employee_profile' in query.lower():
+        elif 'zy_hr_employee_profile' in query.lower():
             self._data = [{'name': '张三', 'department': '营销中心', 'current_position': '科长',
                            'technical_certificates': '(2020年)市级：技术认证',
                            'skill_certificates': '(2021年)省级：技能大赛',
@@ -135,7 +135,7 @@ class MockCursor:
                            'municipal_research_projects': '', 'provincial_research_projects': '',
                            'municipal_competitions': '', 'provincial_competitions': '',
                            'municipal_honors': '', 'provincial_honors': ''}]
-        elif 'tb_zjyc_teacher' in query or 'teacher' in query.lower():
+        elif 'zy_hr_teacher' in query or 'teacher' in query.lower():
             self._data = [
                 {'name': '张三', 'role': '员工', 'department': '营销中心', 'current_position': '科长'},
                 {'name': '李四', 'role': '导师', 'department': '物流中心', 'current_position': '高级工程师'},
@@ -143,13 +143,13 @@ class MockCursor:
             # DUAL table queries return a single row
             if 'DUAL' in query:
                 self._data = [{'name': '张三', 'role': '员工', 'department': '营销中心', 'current_position': '科长'}]
-        elif 'tb_zjyc_score_record' in query or 'score' in query.lower():
+        elif 'zy_hr_score_record' in query or 'score' in query.lower():
             self._data = [
                 {'member_name': '张三', 'related_achievement_id': 1, 'before_score': 80, 'after_score': 90,
                  'score_change': 10, 'achievement_type': '论文', 'change_reason': '发表核心期刊',
                  'operate_time': '2026-01-01 10:00:00', 'record_create_time': '2026-01-01 10:00:00'},
             ]
-        elif 'hs_rencai' in query or 'talent' in query.lower():
+        elif 'zy_hr_talent_pool' in query or 'talent' in query.lower():
             self._data = [
                 {'category': 'admin', 'count': 5, 'total': 20},
                 {'category': 'technical', 'count': 8, 'total': 20},
@@ -159,18 +159,18 @@ class MockCursor:
             # wordcloud query
             if 'wordcloud_tags' in query:
                 self._data = [{'wordcloud_tags': '{"wordcloud": [{"name": "技术", "value": 10}, {"name": "管理", "value": 8}]}'}]
-        elif 'tb_zjyc_group_project' in query or 'tb_zjyc_group_members' in query or 'group' in query.lower():
+        elif 'zy_hr_group_project' in query or 'zy_hr_group_members' in query or 'group' in query.lower():
             # COUNT 查询优先
             if 'count(*) as cnt' in query.lower() or 'cnt' in query.lower()[:40]:
                 self._data = [{'cnt': 5}]
             elif 'count(*) as total' in query.lower():
                 self._data = [{'total': 5}]
-            elif 'tb_zjyc_group_members' in query:
+            elif 'zy_hr_group_members' in query:
                 self._data = [
                     {'member_id': 1, 'project_id': 1, 'member_name': '张三',
                      'member_title': '负责人', 'member_type': 0, 'sort_order': 1},
                 ]
-            elif 'tb_zjyc_group_phases' in query:
+            elif 'zy_hr_group_phases' in query:
                 self._data = [
                     {'phase_id': 1, 'project_id': 1, 'phase_name': '第一阶段',
                      'phase_description': '调研', 'sort_order': 1},
