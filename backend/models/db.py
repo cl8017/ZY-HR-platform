@@ -1,20 +1,17 @@
-"""数据库连接管理 — 使用上下文管理器，支持连接池"""
+"""数据模型 — 数据库连接管理，使用上下文管理器，支持连接池"""
 
 from contextlib import contextmanager
 import pymysql
 from pymysql.cursors import DictCursor
 from backend.config import DBConfig
+from backend.config import config
 import logging
 
 logger = logging.getLogger(__name__)
 
 
 class DatabaseManager:
-    """数据库连接管理器
-
-    使用 contextmanager 确保每个请求正确获取/释放连接。
-    后续可扩展为真正的连接池（如 SQLAlchemy 或 DBUtils）。
-    """
+    """数据库连接管理器"""
 
     def __init__(self, db_config: DBConfig):
         self.config = db_config
@@ -46,7 +43,6 @@ class DatabaseManager:
             conn.close()
 
     def test_connection(self) -> bool:
-        """测试数据库连接是否正常"""
         try:
             with self.get_conn() as conn:
                 with conn.cursor() as cursor:
@@ -55,3 +51,8 @@ class DatabaseManager:
         except Exception as e:
             logger.warning(f"数据库连接测试失败: {e}")
             return False
+
+
+# 实例化两个数据库连接管理器
+db = DatabaseManager(config.db)
+db2 = DatabaseManager(config.db2)
