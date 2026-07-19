@@ -67,6 +67,9 @@ def create_app():
     from backend.routes.project import project_bp
     app.register_blueprint(project_bp)
 
+    from backend.routes.auth import auth_bp
+    app.register_blueprint(auth_bp)
+
     return app
 
 
