@@ -74,14 +74,14 @@ graph TB
 
 | 组件 | 当前 | 重构后目标 |
 |------|------|-----------|
-| 后端框架 | Flask (单文件) | Flask + Blueprints |
-| 数据库 | PyMySQL (裸连) | PyMySQL + 连接池 |
-| 配置管理 | 硬编码字符串 | python-dotenv + .env |
+| 后端框架 | Flask + Blueprints（已重构） | Flask + Blueprints |
+| 数据库 | PyMySQL + 连接池（已重构） | PyMySQL + 连接池 |
+| 配置管理 | python-dotenv + .env（已重构） | python-dotenv + .env |
 | 前端 | 纯 HTML | 纯 HTML + 公共模块 |
 | CSS | Tailwind CDN (各页独立) | Tailwind CDN + 统一主题变量 |
 | 图表 | ECharts 5.4 + Chart.js 4.4 | 同上（统一引入） |
 | 图标 | FontAwesome 4.7 / 7.1 | FontAwesome 6 统一版本 |
-| 静态服务 | Python http.server | Flask 直接托管 |
+| 静态服务 | Flask 直接托管（已重构） | Flask 直接托管 |
 | 部署 | 手动 python 启动 | gunicorn + systemd |
 | 认证 | 若依 SSO (外部) | 若依 Token 校验中间件 |
 

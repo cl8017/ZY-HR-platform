@@ -180,11 +180,11 @@ ZY-HR/
 
 #### 1.3 交付物
 
-- [ ] 标准化项目目录结构
-- [ ] `requirements.txt` + `.env` 配置管理
-- [ ] `.gitignore` + `README.md`
+- [x] 标准化项目目录结构
+- [x] `requirements.txt` + `.env` 配置管理
+- [x] `.gitignore` + `README.md`
 - [ ] 废弃文件清理脚本（`scripts/clean_old_files.py`）
-- [ ] 基础后端骨架（app.py + config.py + db.py）
+- [x] 基础后端骨架（app.py + config.py + db.py）
 
 ---
 

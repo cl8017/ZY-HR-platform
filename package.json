@@ -1,0 +1,26 @@
+{
+  "name": "zy-hr",
+  "version": "1.0.0",
+  "description": "> Zhenjiang Tobacco HR Digital Platform",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cl8017/ZY-HR-platform.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/cl8017/ZY-HR-platform/issues"
+  },
+  "homepage": "https://github.com/cl8017/ZY-HR-platform#readme",
+  "dependencies": {
+    "playwright": "^1.61.1"
+  }
+}
