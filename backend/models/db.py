@@ -3,11 +3,12 @@
 支持 mock 模式（MOCK_DB=1 时返回假数据）
 """
 import pymysql
+import os
 from pymysql.cursors import DictCursor
 from contextlib import contextmanager
 from datetime import datetime
 
-from backend.config import config
+from backend.config import config, DBConfig
 
 
 class DatabaseManager:
@@ -217,3 +218,14 @@ class MockCursor:
 # 全局实例 - db1 已废弃(原210服务器)，全部指向 db2(36.149.161.6)
 db1 = DatabaseManager(config.db2, mock_data={'db_name': 'yancao'})
 db2 = DatabaseManager(config.db2, mock_data={'db_name': 'yancao'})
+# yancao 读库（RuoYi系统表）
+db_yancao = DatabaseManager(
+    DBConfig(
+        host=os.getenv('DB2_HOST', os.getenv('DB_HOST', '127.0.0.1')),
+        port=int(os.getenv('DB2_PORT', os.getenv('DB_PORT', '3306'))),
+        user=os.getenv('DB2_USER', os.getenv('DB_USER', 'root')),
+        password=os.getenv('DB2_PASSWORD', os.getenv('DB_PASSWORD', '112233')),
+        database='yancao',
+    ),
+    mock_data={'db_name': 'yancao'}
+)

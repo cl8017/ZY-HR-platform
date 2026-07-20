@@ -70,6 +70,9 @@ def create_app():
     from backend.routes.auth import auth_bp
     app.register_blueprint(auth_bp)
 
+    from backend.routes.system import system_bp
+    app.register_blueprint(system_bp)
+
     return app
 
 
