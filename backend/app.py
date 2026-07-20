@@ -73,6 +73,9 @@ def create_app():
     from backend.routes.system import system_bp
     app.register_blueprint(system_bp)
 
+    from backend.routes.crud import crud_bp
+    app.register_blueprint(crud_bp)
+
     return app
 
 
