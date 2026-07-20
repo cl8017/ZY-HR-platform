@@ -1,154 +1,112 @@
 # 部署运维
 
-> 部署环境配置、启动方式、运维管理说明。
+## 开发环境
 
----
+### 前置条件
 
-## 一、部署方式
+- Python 3.10+
+- MySQL 8.0+
+- Git
 
-### 1.1 当前部署（原始方式）
-
-```bash
-# 启动 Flask API（后端）
-cd /mnt/c/code/ZY-HR
-python zjyc_api.py
-
-# 另启一个终端，启动静态文件服务
-python http.server.py 8000
-```
-
-**问题**:
-- 需要两个终端 / 两个进程
-- 无后台守护，终端关闭服务即停止
-- 无自动重启
-
-### 1.2 推荐部署重构后
-
-#### 方案 A：Flask 托管一切（适合轻量部署）
-
-```
-Flask API Server (gunicorn)
-├── /api/* → 后端业务路由
-└── / → 静态文件 (不存在的路由 fallback 到静态)
-```
-
-#### 方案 B：Nginx + Gunicorn（生产推荐）
-
-```
-Nginx (:80/:443)
-├── /api/* → proxy_pass Gunicorn :58000
-├── /static/* → 直接 serve 文件
-└── /* → index.html SPA 入口
-```
-
----
-
-## 二、环境配置
-
-### 2.1 环境变量
-
-创建 `.env` 文件在项目根目录：
+### 首次部署
 
 ```bash
-# 数据库配置1（主业务库）
-DB_HOST=210.16.170.156
-DB_PORT=3306
-DB_USER=zj-yancao
-DB_PASSWORD=your_password
-DB_NAME=zj-yancao
+# 1. 克隆代码
+git clone https://github.com/cl8017/ZY-HR-platform.git
+cd ZY-HR-platform
 
-# 数据库配置2（备用库）
-DB2_HOST=36.149.161.6
-DB2_PORT=33973
-DB2_USER=root
-DB2_PASSWORD=your_password
-DB2_NAME=yancao
+# 2. 安装依赖
+pip3 install -r requirements.txt --break-system-packages
 
-# 应用配置
-SECRET_KEY=random-secret-key-change-me
-FLASK_DEBUG=0
+# 3. 配置数据库
+vim .env  # 编辑数据库连接信息
 
-# 外部系统
-RUOYI_BASE_URL=http://36.149.161.6:18114
-STATIC_BASE_URL=http://210.16.170.156:58000
+# 4. 初始化数据库
+python3 scripts/sync_schema.py init
+
+# 5. 启动服务器
+python3 backend/app.py
+# 访问 http://localhost:58000
 ```
 
-### 2.2 Python 依赖
-
-```txt
-# requirements.txt
-Flask==3.1.0
-flask-cors==5.0.1
-PyMySQL==1.1.1
-python-dotenv==1.1.0
-python-multipart==0.0.20
-gunicorn==23.0.0
-```
-
-### 2.3 Virtualenv 设置
+### 日常更新
 
 ```bash
-python3 -m venv venv
-source venv/bin/activate
-pip install -r requirements.txt
+# 一键部署（推荐）
+python3 scripts/deploy.py --env test
+
+# 或者手动
+git pull origin main
+pip3 install -r requirements.txt --break-system-packages
+python3 scripts/sync_schema.py check  # 检查Schema
+python3 scripts/sync_schema.py repair # 修复Schema
+kill $(lsof -ti :58000) && python3 backend/app.py &
+```
+
+### 数据库管理
+
+```bash
+# 检查表结构完整性
+python3 scripts/sync_schema.py check
+
+# 修复表结构（添加缺失字段）
+python3 scripts/sync_schema.py repair
+
+# 重新初始化数据库（会清空数据）
+python3 scripts/sync_schema.py init
+
+# 数据迁移（从 yancao 库导入）
+python3 scripts/migrate_data.py
 ```
 
 ---
 
-## 三、启动命令
+## 生产环境部署
 
-### 3.1 开发模式
+### 目录结构
 
-```bash
-# 加载环境变量
-export $(grep -v '^#' .env | xargs)
-
-# 启动
-python backend/app.py
-# 或
-flask --app backend/app --debug run --port 58000
+```
+/opt/ZY-HR/
+├── backend/          # Flask 后端
+├── static/           # 静态资源
+├── pages/            # 前端页面
+├── scripts/          # 运维脚本
+├── docs/wiki/        # 文档
+├── logs/             # 日志
+├── .env              # 配置文件（不提交git）
+├── requirements.txt
+└── venv/             # Python 虚拟环境
 ```
 
-### 3.2 生产模式
+### Nginx 反向代理
 
-```bash
-# Gunicorn 启动
-source venv/bin/activate
-gunicorn -w 4 -b 0.0.0.0:58000 \
-  --access-logfile logs/access.log \
-  --error-logfile logs/error.log \
-  --log-level info \
-  backend.app:app
+```nginx
+server {
+    listen 80;
+    server_name your-domain.com;
+
+    location / {
+        proxy_pass http://127.0.0.1:58000;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    }
+}
 ```
 
----
-
-## 四、Systemd 服务（生产环境）
-
-### 4.1 创建服务文件
+### Systemd 服务
 
 ```ini
-# /etc/systemd/system/zj-hr.service
 [Unit]
-Description=ZY-HR Talent Platform Backend
-After=network.target mysql.service
-Wants=mysql.service
+Description=ZY-HR Flask Backend
+After=network.target
 
 [Service]
 Type=simple
 User=www-data
 WorkingDirectory=/opt/ZY-HR
 EnvironmentFile=/opt/ZY-HR/.env
-ExecStart=/opt/ZY-HR/venv/bin/gunicorn \
-  -w 4 \
-  -b 0.0.0.0:58000 \
-  --access-logfile /var/log/zj-hr/access.log \
-  --error-logfile /var/log/zj-hr/error.log \
-  --log-level info \
-  --max-requests 10000 \
-  --max-requests-jitter 1000 \
-  --timeout 120 \
-  backend.app:app
+ExecStart=/opt/ZY-HR/venv/bin/gunicorn -w 4 -b 0.0.0.0:58000 backend.app:app
 Restart=always
 RestartSec=10
 
@@ -156,123 +114,56 @@ RestartSec=10
 WantedBy=multi-user.target
 ```
 
-### 4.2 管理命令
+---
+
+## 数据库 Schema
+
+### 业务表（zy_hr 库）
+
+| 表名 | 说明 | 数据量 |
+|------|------|--------|
+| zy_hr_employee_roster | 员工花名册 | 509 |
+| zy_hr_employee_profile | 员工档案 | 415 |
+| zy_hr_red_alert | 红色预警 | 15 |
+| zy_hr_retirement_prediction | 退休预测 | 153 |
+| zy_hr_personnel_statistics | 编制统计 | 46 |
+| zy_hr_competency_analysis | 胜任力分析 | 375 |
+| zy_hr_talent_pool | 人才库 | 216 |
+| zy_hr_teacher | 导师帮带 | 5 |
+| zy_hr_score_record | 积分记录 | 4 |
+| zy_hr_member | 积分成员 | 3 |
+| zy_hr_master_studio | 大师工作室 | 2 |
+| zy_hr_master_studio_member | 工作室成员 | 6 |
+| zy_hr_group_project | 课题项目 | 2 |
+| zy_hr_group_members | 项目成员 | 6 |
+| zy_hr_group_phases | 项目阶段 | 5 |
+| zy_hr_group_phase_content | 阶段内容 | 5 |
+| zy_hr_group_achievements | 项目成果 | 4 |
+| zy_hr_group_dashboards | 项目看板 | 2 |
+
+### 系统表（yancao 库）
+
+若依 RuoYi 系统表，提供用户认证和菜单管理：
+
+| 表名 | 说明 |
+|------|------|
+| sys_user | 用户(5) |
+| sys_role | 角色(3) |
+| sys_menu | 菜单(222) |
+| sys_dept | 部门(10) |
+| sys_role_menu | 角色菜单关联(140) |
+
+---
+
+## 常用运维命令
 
 ```bash
-# 启用服务
-sudo systemctl daemon-reload
-sudo systemctl enable zj-hr
-sudo systemctl start zj-hr
-
-# 查看状态
-sudo systemctl status zj-hr
-
 # 查看日志
-sudo journalctl -u zj-hr -f
-sudo tail -f /var/log/zj-hr/error.log
+tail -f logs/app.log
 
-# 重启
-sudo systemctl restart zj-hr
+# 重启服务
+kill $(lsof -ti :58000) && python3 backend/app.py &
+
+# 查看数据库状态
+python3 scripts/sync_schema.py check
 ```
-
----
-
-## 五、日志配置
-
-```python
-# backend/config.py 中的日志配置
-import logging
-from logging.handlers import RotatingFileHandler
-
-def setup_logging(app):
-    handler = RotatingFileHandler(
-        'logs/zj-hr.log',
-        maxBytes=10*1024*1024,  # 10MB
-        backupCount=5,
-        encoding='utf-8'
-    )
-    handler.setFormatter(logging.Formatter(
-        '%(asctime)s [%(levelname)s] %(module)s: %(message)s'
-    ))
-    app.logger.addHandler(handler)
-    app.logger.setLevel(logging.INFO)
-```
-
----
-
-## 六、Nginx 反向代理（推荐）
-
-```nginx
-# /etc/nginx/sites-available/zj-hr
-server {
-    listen 80;
-    server_name your-domain.com;
-    client_max_body_size 50M;
-
-    # API 请求转发到 Gunicorn
-    location /api/ {
-        proxy_pass http://127.0.0.1:58000;
-        proxy_set_header Host $host;
-        proxy_set_header X-Real-IP $remote_addr;
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_set_header X-Forwarded-Proto $scheme;
-    }
-
-    # 静态资源
-    location /static/ {
-        alias /opt/ZY-HR/static/;
-        expires 30d;
-        add_header Cache-Control "public, immutable";
-    }
-
-    # 前端页面
-    location / {
-        alias /opt/ZY-HR/pages/;
-        try_files $uri $uri/ /index.html;
-    }
-}
-```
-
----
-
-## 七、运维检查清单
-
-### 7.1 日常运维
-
-- [ ] 检查 gunicorn 进程是否运行: `ps aux | grep gunicorn`
-- [ ] 检查数据库连接: `curl http://localhost:58000/api/health`
-- [ ] 查看错误日志: `tail -30 logs/error.log`
-- [ ] 磁盘空间: `df -h`
-
-### 7.2 部署流程
-
-```bash
-# 1. 拉取最新代码
-cd /opt/ZY-HR
-git pull
-
-# 2. 更新依赖
-source venv/bin/activate
-pip install -r requirements.txt --upgrade
-
-# 3. 重启服务
-sudo systemctl restart zj-hr
-
-# 4. 验证
-sleep 3 && curl http://localhost:58000/api/health
-```
-
-### 7.3 回滚流程
-
-```bash
-cd /opt/ZY-HR
-git revert HEAD
-sudo systemctl restart zj-hr
-```
-
----
-
-## 八、相关文档
-
-- [[architecture|系统架构]]
-- [[refactoring-plan|重构方案#部署配置]]
