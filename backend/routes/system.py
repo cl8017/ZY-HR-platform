@@ -11,9 +11,14 @@ system_bp = Blueprint('system', __name__)
 def _derive_route_name(path, component=None, seen_names=None):
     """从组件路径推导 Vue 路由 name（PascalCase），自动去重
     例: yancao/rencai/index → Rencai,   system/user/index → User
+    组件为 Layout/ParentView/InnerLink 时用 path 推导
     重复会在末尾加 _2, _3 ... 确保唯一
     """
-    raw = component or path or ''
+    # 特殊组件用 path 推导
+    if component in ('Layout', 'ParentView', 'InnerLink') or not component:
+        raw = path or ''
+    else:
+        raw = component
     raw = raw.replace('.vue', '').replace('.html', '')
     parts = [p for p in raw.replace('\\', '/').split('/') if p and p not in ('index', 'Index')]
     last = parts[-1] if parts else raw
@@ -33,11 +38,20 @@ def _derive_route_name(path, component=None, seen_names=None):
 
 
 def _normalize_path(path):
-    """确保路径以 / 开头"""
+    """确保路由路径以 / 开头，但外部 URL 跳过"""
     path = path or ''
-    if path and not path.startswith('/'):
+    if not path:
+        return path
+    if path.startswith('http://') or path.startswith('https://'):
+        return path  # 外部 URL 不加 /
+    if not path.startswith('/'):
         path = '/' + path
     return path
+
+
+def _is_external_url(path):
+    """判断是否是外部 URL"""
+    return bool(path and (path.startswith('http://') or path.startswith('https://')))
 
 
 def _build_menu_tree(items, parent_id=0, seen_names=None):
@@ -50,7 +64,18 @@ def _build_menu_tree(items, parent_id=0, seen_names=None):
             sub = _build_menu_tree(items, item['menu_id'], seen_names)
             component = item.get('component') or ''
             path_raw = item.get('path') or ''
-            path = _normalize_path(path_raw)
+            menu_type = item.get('menu_type', 'M')
+
+            # 外部 URL → 用原始 URL 作为 path，组件设为 InnerLink
+            if _is_external_url(path_raw):
+                path = path_raw
+                component = 'InnerLink'
+            else:
+                path = _normalize_path(path_raw)
+                # 目录型菜单 (type=M) 无自定义组件时用 Layout
+                if menu_type == 'M' and not component:
+                    component = 'Layout'
+
             node = {
                 'id': item['menu_id'],
                 'label': item['menu_name'],
@@ -58,7 +83,7 @@ def _build_menu_tree(items, parent_id=0, seen_names=None):
                 'icon': item.get('icon') or '',
                 'path': path,
                 'component': component,
-                'type': item.get('menu_type', 'M'),
+                'type': menu_type,
                 'visible': item.get('visible') == '0',
                 'order': item.get('order_num', 0),
                 'children': sub,
