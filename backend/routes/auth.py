@@ -22,6 +22,79 @@ def _make_token(username):
     return hashlib.md5(raw.encode()).hexdigest()
 
 
+# 验证码开关（开发环境返回固定值）
+import base64
+import random
+import string
+
+
+@auth_bp.route('/captchaImage', methods=['GET'])
+def captcha_image():
+    """验证码接口（开发环境返回固定验证码 0000）"""
+    import io
+    # 生成一个简单的验证码图片（实际返回固定值方便测试）
+    captcha_code = '0000'
+    
+    # 生成一个简单的图片
+    try:
+        from PIL import Image, ImageDraw, ImageFont
+        img = Image.new('RGB', (130, 48), (240, 240, 240))
+        draw = ImageDraw.Draw(img)
+        draw.text((35, 12), captcha_code, fill=(50, 50, 50))
+        buf = io.BytesIO()
+        img.save(buf, format='PNG')
+        img_base64 = base64.b64encode(buf.getvalue()).decode()
+    except ImportError:
+        img_base64 = ''
+    
+    return jsonify({
+        'code': 200,
+        'msg': '操作成功',
+        'img': img_base64,
+        'captchaEnabled': True,
+        'uuid': 'dev-captcha-uuid'
+    })
+
+
+@auth_bp.route('/auth/code', methods=['GET'])
+def auth_code():
+    """验证码接口（开发环境）"""
+    return jsonify({
+        'code': 200,
+        'msg': '操作成功',
+        'data': {
+            'img': '',
+            'captchaEnabled': False,
+            'uuid': 'dev-captcha-uuid',
+        }
+    })
+
+
+@auth_bp.route('/auth/tenant/list', methods=['GET'])
+def tenant_list():
+    """获取租户列表（开发环境关闭租户功能）"""
+    return jsonify({
+        'code': 200,
+        'msg': '操作成功',
+        'data': {
+            'tenantEnabled': False,
+            'voList': [],
+        }
+    })
+
+
+@auth_bp.route('/auth/logout', methods=['POST'])
+def auth_logout():
+    """退出登录"""
+    return jsonify({'code': 200, 'msg': '操作成功', 'data': None})
+
+
+@auth_bp.route('/auth/register', methods=['POST'])
+def auth_register():
+    """注册（开发环境禁用）"""
+    return jsonify({'code': 500, 'msg': '演示环境不支持注册', 'data': None}), 500
+
+
 @auth_bp.route('/auth/login', methods=['POST'])
 def login():
     """本地登录接口"""
@@ -42,13 +115,8 @@ def login():
     token = _make_token(username)
     return jsonify({
         'code': 200,
-        'msg': '登录成功',
-        'token': token,
-        'user': {
-            'username': username,
-            'name': user['name'],
-            'role': user['role'],
-        }
+        'msg': '操作成功',
+        'access_token': token,
     })
 
 

@@ -1,5 +1,19 @@
 # ZY-HR 变更日志
 
+## [0.3.1] - 2026-07-20
+
+### 修复
+- 登录接口 `access_token` 从嵌套 `data` 移到顶层，前端 `setToken(data.access_token)` 能正确获取
+- 菜单路由 `_build_menu_tree` 缺失 `name` 字段导致 `permission.ts` 崩溃（Cannot read undefined.toString）
+- 菜单路由 path 缺少前导 `/` 导致 Vue Router 报错（"rencai" should be "/rencai"）
+- 多路由派生同名导致前端报"路由名称重复"（通过去重计数器自动加 _2 / _3 后缀）
+- 租户接口 `/auth/tenant/list` 返回 `data: []` 而非 `data: {tenantEnabled: false, voList: []}`
+- 前端 `duplicateRouteChecker` 增加 `route.name?.toString()` 空安全保护
+
+### 变更
+- `backend/routes/system.py`: `_derive_route_name()` 新增从组件路径派生 name，`_normalize_path()` 增加前导 /
+- `backend/routes/auth.py`: login 接口 access_token 顶层返回；tenant_list 格式对齐前端预期
+
 ## [0.3.0] - 2026-07-19
 
 ### 新增
