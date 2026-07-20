@@ -86,6 +86,12 @@ def _build_menu_tree(items, parent_id=0, seen_names=None):
                 'type': menu_type,
                 'visible': item.get('visible') == '0',
                 'order': item.get('order_num', 0),
+                'meta': {
+                    'title': item['menu_name'],
+                    'icon': item.get('icon') or '',
+                    'link': path if _is_external_url(path) else None,
+                    'noCache': False,
+                },
                 'children': sub,
             }
             children.append(node)
