@@ -54,14 +54,14 @@ def _is_external_url(path):
     return bool(path and (path.startswith('http://') or path.startswith('https://')))
 
 
-def _build_menu_tree(items, parent_id=0, seen_names=None):
+def _build_menu_tree(items, parent_id=0, seen_names=None, is_root=True):
     """将扁平菜单列表构建为树形结构（若依 Vue 前端路由格式）"""
     if seen_names is None:
         seen_names = set()
     children = []
     for item in items:
         if item.get('parent_id') == parent_id or (parent_id == 0 and item.get('parent_id') is None):
-            sub = _build_menu_tree(items, item['menu_id'], seen_names)
+            sub = _build_menu_tree(items, item['menu_id'], seen_names, is_root=False)
             component = item.get('component') or ''
             path_raw = item.get('path') or ''
             menu_type = item.get('menu_type', 'M')
@@ -71,7 +71,11 @@ def _build_menu_tree(items, parent_id=0, seen_names=None):
                 path = path_raw
                 component = 'InnerLink'
             else:
-                path = _normalize_path(path_raw)
+                # 仅根级路径补前导 /，子路由用 Vue Router 相对路径保持嵌套
+                if is_root:
+                    path = _normalize_path(path_raw)
+                else:
+                    path = path_raw
                 # 目录型菜单 (type=M) 无自定义组件时用 Layout
                 if menu_type == 'M' and not component:
                     component = 'Layout'
