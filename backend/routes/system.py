@@ -66,9 +66,12 @@ def _build_menu_tree(items, parent_id=0, seen_names=None, is_root=True):
             path_raw = item.get('path') or ''
             menu_type = item.get('menu_type', 'M')
 
-            # 外部 URL → 用原始 URL 作为 path，组件设为 InnerLink
+            # 外部 URL → 用 /link/<base64_url> 作为 path，避免 Link.vue 开新标签页
+            link_url = None
             if _is_external_url(path_raw):
-                path = path_raw
+                import base64
+                link_url = path_raw
+                path = '/link/' + base64.urlsafe_b64encode(link_url.encode()).decode().rstrip('=')
                 component = 'InnerLink'
             else:
                 # 仅根级路径补前导 /，子路由用 Vue Router 相对路径保持嵌套
@@ -83,7 +86,10 @@ def _build_menu_tree(items, parent_id=0, seen_names=None, is_root=True):
             node = {
                 'id': item['menu_id'],
                 'label': item['menu_name'],
-                'name': _derive_route_name(path, component, seen_names),
+                'name': _derive_route_name(
+                    link_url if _is_external_url(path_raw) else path,
+                    component, seen_names
+                ),
                 'icon': item.get('icon') or '',
                 'path': path,
                 'component': component,
@@ -93,7 +99,7 @@ def _build_menu_tree(items, parent_id=0, seen_names=None, is_root=True):
                 'meta': {
                     'title': item['menu_name'],
                     'icon': item.get('icon') or '',
-                    'link': path if _is_external_url(path) else None,
+                    'link': link_url if _is_external_url(path_raw) else None,
                     'noCache': False,
                 },
                 'children': sub,
