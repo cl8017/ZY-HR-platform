@@ -97,6 +97,13 @@ def get_employee_roster_markdown():
                 """
                 cursor.execute(sql, (pagesize, offset))
                 data = cursor.fetchall()
-        return json.dumps(data, ensure_ascii=False), 200, {'Content-Type': 'application/json; charset=utf-8'}
+        import datetime, decimal
+        def json_serialize(obj):
+            if isinstance(obj, (datetime.date, datetime.datetime)):
+                return obj.isoformat()
+            if isinstance(obj, decimal.Decimal):
+                return float(obj)
+            raise TypeError(f'Object of type {type(obj)} is not JSON serializable')
+        return json.dumps(data, ensure_ascii=False, default=json_serialize), 200, {'Content-Type': 'application/json; charset=utf-8'}
     except Exception as e:
         return jsonify({'error': f'查询失败: {str(e)}'}), 500
