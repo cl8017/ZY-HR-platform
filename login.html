@@ -180,7 +180,12 @@
   </div>
 
   <script>
-    // 密码显示/隐藏切换
+    // 如果已有登录 Token，直接跳转到首页
+    if (localStorage.getItem('Admin-Token') || sessionStorage.getItem('Admin-Token-Session')) {
+      window.location.href = '/index.html';
+    }
+
+    // 切换密码显示/隐藏
     const togglePassword = document.getElementById('togglePassword');
     const password = document.getElementById('password');
     
@@ -286,10 +291,10 @@
         const result = await response.json();
         
         // 处理响应 - 新增Token存储逻辑
-        if (response.ok && result.code === 200 && result.msg === "操作成功") {
-          // 提取access_token
-          const accessToken = result.data?.access_token;
-          
+        if (response.ok) {
+          // 提取access_token（兼容本地登录和若依两种格式）
+          const accessToken = result.token || result.data?.access_token;
+
           if (accessToken) {
             // 将token存入本地存储，键为Admin-Token
             localStorage.setItem('Admin-Token', accessToken);

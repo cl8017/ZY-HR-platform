@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>镇江烟草人才培养数智平台</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="/static/css/nav.css">
+</head>
+<body>
+    <div class="zy-layout">
+        <!-- 侧边栏 -->
+        <aside class="zy-sidebar">
+            <div class="zy-sidebar-logo">
+                <div class="logo-icon">🌿</div>
+                <span>人才培养数智平台</span>
+            </div>
+            <div class="zy-sidebar-inner" id="zy-hr-sidebar">
+                <!-- nav.js 动态渲染 -->
+            </div>
+        </aside>
+
+        <!-- 主区域 -->
+        <div class="zy-main">
+            <!-- 顶栏 -->
+            <header class="zy-header">
+                <div class="zy-header-title">首页</div>
+                <div class="zy-userbar" id="zy-hr-userbar">
+                    <!-- nav.js 动态渲染 -->
+                </div>
+            </header>
+
+            <!-- 内容区 -->
+            <main class="zy-content">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                    <div class="bg-white rounded-lg p-6 shadow-sm">
+                        <div class="text-3xl font-bold text-primary">509</div>
+                        <div class="text-gray-500 text-sm mt-1">在职员工</div>
+                    </div>
+                    <div class="bg-white rounded-lg p-6 shadow-sm">
+                        <div class="text-3xl font-bold text-blue-600">216</div>
+                        <div class="text-gray-500 text-sm mt-1">人才库</div>
+                    </div>
+                    <div class="bg-white rounded-lg p-6 shadow-sm">
+                        <div class="text-3xl font-bold text-orange-500">15</div>
+                        <div class="text-gray-500 text-sm mt-1">红色预警</div>
+                    </div>
+                    <div class="bg-white rounded-lg p-6 shadow-sm">
+                        <div class="text-3xl font-bold text-green-600">153</div>
+                        <div class="text-gray-500 text-sm mt-1">退休预测</div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+                    <div class="bg-white rounded-lg p-6 shadow-sm">
+                        <h3 class="text-lg font-medium mb-4">编制统计</h3>
+                        <div id="compilation-chart" style="height: 300px;"></div>
+                    </div>
+                    <div class="bg-white rounded-lg p-6 shadow-sm">
+                        <h3 class="text-lg font-medium mb-4">人才分类</h3>
+                        <div id="talent-chart" style="height: 300px;"></div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+    <script src="/static/js/nav.js"></script>
+    <script>
+    // 首页仪表板图表
+    document.addEventListener('DOMContentLoaded', function() {
+        // 编制统计 - 柱状图
+        fetch('/compilation')
+            .then(r => r.json())
+            .then(data => {
+                const chart = echarts.init(document.getElementById('compilation-chart'));
+                if (Array.isArray(data) && data.length > 0) {
+                    chart.setOption({
+                        tooltip: { trigger: 'axis' },
+                        xAxis: { type: 'category', data: data.slice(0,10).map(d => d['部门名称'] || ''), axisLabel: { rotate: 30, fontSize: 10 } },
+                        yAxis: { type: 'value' },
+                        series: [
+                            { name: '编制数', type: 'bar', data: data.slice(0,10).map(d => d['人员编制数_总数'] || 0), itemStyle: { color: '#1E5A32' } },
+                            { name: '实有数', type: 'bar', data: data.slice(0,10).map(d => d['实有人数_总数'] || 0), itemStyle: { color: '#0EA5E9' } }
+                        ]
+                    });
+                } else {
+                    chart.setOption({ title: { text: '暂无编制数据', left: 'center', top: 'center' } });
+                }
+            });
+
+        // 人才分类 - 饼图
+        fetch('/api/zjyc/count_by_category')
+            .then(r => r.json())
+            .then(data => {
+                const chart = echarts.init(document.getElementById('talent-chart'));
+                if (data && data.all > 0) {
+                    const categories = Object.entries(data).filter(([k]) => k !== 'all');
+                    chart.setOption({
+                        tooltip: { trigger: 'item', formatter: '{b}: {c} ({d}%)' },
+                        series: [{
+                            type: 'pie',
+                            radius: ['40%', '70%'],
+                            data: categories.map(([k, v]) => ({ name: k, value: v })),
+                            label: { show: true, formatter: '{b}' }
+                        }]
+                    });
+                } else {
+                    chart.setOption({ title: { text: '暂无人才数据', left: 'center', top: 'center' } });
+                }
+            });
+    });
+    </script>
+</body>
+</html>
